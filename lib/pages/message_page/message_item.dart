@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tim/global.dart';
 import 'package:flutter_tim/pages/chat_page.dart';
 import 'package:flutter_tim/pages/home_page.dart';
 import 'package:flutter_tim/pages/message_page.dart';
@@ -8,7 +7,6 @@ import 'package:flutter_tim/utils/scroll_behaviors.dart';
 import 'package:flutter_tim/widgets/enter_exit_route.dart';
 
 class MessageItem extends StatefulWidget {
-
   final ConversationEntity data;
   final Function onTap;
 
@@ -68,6 +66,36 @@ class _MessageItemState extends State<MessageItem> {
   void _filpToRight() {
     _controller.animateTo(0.0,
         duration: Duration(milliseconds: 100), curve: Curves.easeInOut);
+  }
+
+  String _genTime(DateTime sendTime) {
+    sendTime = sendTime.add(Duration(hours: 8));
+    String _numToWord(int n) {
+      switch (n) {
+        case 1:
+          return '一';
+        case 2:
+          return '二';
+        case 3:
+          return '三';
+        case 4:
+          return '四';
+        case 5:
+          return '五';
+        case 6:
+          return '六';
+        case 7:
+          return '日';
+        default: return '';
+      }
+    }
+    
+    DateTime now = DateTime.now().add(Duration(hours:8));
+    if (now.day - sendTime.day > 0) {
+      return ('星期${_numToWord(sendTime.weekday)}');
+    } else {
+      return ('${sendTime.hour}:${sendTime.minute}');
+    }
   }
 
   Offset _tapDownPostion;
@@ -151,7 +179,8 @@ class _MessageItemState extends State<MessageItem> {
                                         ),
                                       ),
                                       Text(
-                                        widget.data.messages.last.time,
+                                        _genTime(
+                                            widget.data.messages.last.time),
                                         style: TextStyle(
                                             color: Color(0xff666666),
                                             fontSize: 14.0,

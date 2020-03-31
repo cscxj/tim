@@ -11,6 +11,7 @@ import 'package:flutter_tim/pages/home_page.dart';
 import 'package:flutter_tim/pages/login_page.dart';
 import 'package:flutter_tim/pages/message_page/auto_app_bar.dart';
 import 'package:flutter_tim/pages/message_page/message_item.dart';
+import 'package:flutter_tim/state/conversation_state.dart';
 import 'package:flutter_tim/state/message_state.dart';
 import 'package:flutter_tim/state/user_state.dart';
 import 'package:flutter_tim/widgets/enter_exit_route.dart';
@@ -35,63 +36,53 @@ enum AppBarState {
 class _MessagePageState extends State<MessagePage> {
   AutoAppBarControler _appBarControler;
   ScrollController _scrollController;
-
   AppBarState _appBarState = AppBarState.show;
+
   @override
   void initState() {
     _appBarControler = new AutoAppBarControler();
+    _scrollController = new ScrollController()..addListener(_appBarListener);
     super.initState();
 
-    _scrollController = new ScrollController()..addListener(_appBarListener);
+    WidgetsBinding.instance.addPostFrameCallback(onMounted);
+  }
 
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Dio().post(Api.getConversations, queryParameters: {
-        'username': Provider.of<UserState>(this.context, listen: false).username
-      }).then((value) {
-        List a = cv.jsonDecode(value.data)[0];
-        List<ConversationEntity> conversations = a.map((item) {
-          return ConversationEntity(
-              objectId: item['id'].toString(),
-              objectName: item['remark'] ?? item['name'],
-              objectPicture: item['picture'] ?? 'assets/touXiang.jpg',
-              messages: [
-                CMessage(
-                    time: DateTime.parse(item['time']),
-                    content: item['content'])
-              ]);
-        }).toList();
-
-        Provider.of<MessageState>(this.context, listen: false)
-            .init(conversations);
-        // 请求消息
-        List<Future> requestMessageTasks = [];
-        Provider.of<MessageState>(this.context, listen: false)
-            .data
-            .forEach((conv) {
-          requestMessageTasks.add(Dio().post(Api.getMessages, queryParameters: {
-            'username':
-                Provider.of<UserState>(this.context, listen: false).username,
-            'friend': conv.objectId,
-            'startIndex': 0
-          }).then((res) {
-            List ms = cv.jsonDecode(res.data)[0];
-            conv.messages = ms.reversed.map((m) {
-              return CMessage(
-                  time: DateTime.parse(m['time']),
-                  content: m['content'],
-                  isMeSend: m['is_me_send'] == 1);
-            }).toList();
-          }));
-        });
-        // 消息初始化完之后,监听服务
-        Future.wait(requestMessageTasks).then((_) {
-          print('消息初始化完成了');
+  onMounted(_) {
+    // 请求会话数据
+    Dio().post(Api.getConversations, queryParameters: {
+      'username': Provider.of<UserState>(this.context, listen: false).username
+    }).then((value) {
+      List a = cv.jsonDecode(value.data)[0];
+      Provider.of<ConversationState>(this.context, listen: false)
+          .init(a.map((item) {
+        // 这个Init执行完之后，消息列表的数据框架会显示出来
+        return ConversationEntity(
+            objectId: item['id'].toString(),
+            objectName: item['remark'] ?? item['name'],
+            objectPicture: item['picture'] ?? 'assets/touXiang.jpg',
+            messages: []);
+      }).toList());
+      setState(() {});
+    }).whenComplete(() {
+      Provider.of<ConversationState>(context, listen: false).data.forEach((c) {
+        Dio().post(Api.getMessages, queryParameters: {
+          'username':
+              Provider.of<UserState>(this.context, listen: false).username,
+          'friend': c.objectId,
+          'startIndex': 0
+        }).then((res) {
+          List ms = cv.jsonDecode(res.data)[0];
+          c.messages = (ms.map((m) {
+            return MessageEntity(
+                time: DateTime.parse(m['time']),
+                content: m['content'],
+                isMeSend: m['is_me_send'] == 1);
+          }).toList());
+          setState(() {});
         });
       });
     });
   }
-
-  
 
   double preOffset = 0.0;
   double offset = 0.0;
@@ -119,7 +110,6 @@ class _MessagePageState extends State<MessagePage> {
 
   @override
   Widget build(BuildContext context) {
-    MessageState conversations = Provider.of<MessageState>(context);
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AutoAppBar(
@@ -157,7 +147,9 @@ class _MessagePageState extends State<MessagePage> {
         physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
         children: <Widget>[
           FakeSearchBar(),
-          ...conversations.data.map((conv) {
+          ...Provider.of<ConversationState>(context)
+              .data
+              .map((conv) {
             return MessageItem(
               data: conv,
               onTap: () {

@@ -7,9 +7,11 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_tim/api/api.dart';
+import 'package:flutter_tim/client.dart';
 import 'package:flutter_tim/entities/chat_message.dart';
 import 'package:flutter_tim/pages/chat_page/chat_app_bar.dart';
 import 'package:flutter_tim/pages/chat_page/chat_message_view.dart';
+import 'package:flutter_tim/state/conversation_state.dart';
 import 'package:flutter_tim/state/message_state.dart';
 import 'package:flutter_tim/state/user_state.dart';
 import 'package:provider/provider.dart';
@@ -26,15 +28,15 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   ScrollController _scrollController;
   TextEditingController _inputController;
-  List<CMessage> _messageList;
-  int _dataCount = 0;
+  List<MessageEntity> _historyMessages = [];
+
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController();
     _inputController = TextEditingController();
 
-    _messageList = List.from(widget.conv.messages);
+    //_messageList = widget.conv.messages;
   }
 
   @override
@@ -46,10 +48,15 @@ class _ChatPageState extends State<ChatPage> {
 
   double oldLayoutLength = .0; // 加载到新数据的新增布局长度
 
-  void sendMessage(String msg) {
-    setState(() {
-      // TODO
-    });
+  void sendMessage(String msg, ConversationEntity conv) {
+    Client.channel.sink.add(msg + '/' + conv.objectId.toString());
+    MessageEntity message = MessageEntity(
+        time: DateTime.now(),
+        content: msg,
+        isMeSend: true);
+    Provider.of<ConversationState>(context,listen: false).pushMessage(message,conv.objectId);
+
+    setState(() {});
     _scrollController.animateTo(.0,
         duration: Duration(milliseconds: 200), curve: Curves.linear);
   }
@@ -89,17 +96,17 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  Future<void> _loadingData() async {
+  Future<void> _loadingData(int length) async {
     Response<String> res = await Dio().post(Api.getMessages, queryParameters: {
       'username': Provider.of<UserState>(this.context, listen: false).username,
       'friend': widget.conv.objectId,
-      'startIndex': _messageList.length - 1
+      'startIndex': _historyMessages.length + length
     });
     List ms = cv.jsonDecode(res.data)[0];
     ms.forEach((m) {
-      _messageList.insert(
+      _historyMessages.insert(
           0,
-          CMessage(
+          MessageEntity(
               time: DateTime.parse(m['time']),
               content: m['content'],
               isMeSend: m['is_me_send'] == 1));
@@ -111,6 +118,13 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    ConversationEntity currentConversaion;
+    Provider.of<ConversationState>(context).data.forEach((e) {
+      if (widget.conv.objectId == e.objectId) {
+        currentConversaion = e;
+      }
+    });
+
     return GestureDetector(
       onHorizontalDragEnd: (d) {
         if (d.velocity.pixelsPerSecond.dx > 0) {
@@ -119,7 +133,9 @@ class _ChatPageState extends State<ChatPage> {
       },
       child: Scaffold(
           resizeToAvoidBottomPadding: true,
-          appBar: ChatAppBar(),
+          appBar: ChatAppBar(
+            title: widget.conv.objectName,
+          ),
           resizeToAvoidBottomInset: true,
           body: Column(
             children: <Widget>[
@@ -179,7 +195,9 @@ class _ChatPageState extends State<ChatPage> {
                           ],
                         );
                       }),
-                  onLoad: _loadingData,
+                  onLoad: () async {
+                    await _loadingData(currentConversaion.messages.length);
+                  },
                   slivers: <Widget>[
                     SliverLayoutBuilder(
                       builder: (_, constraints) {
@@ -188,11 +206,19 @@ class _ChatPageState extends State<ChatPage> {
                             constraints: BoxConstraints(
                                 minHeight: constraints.viewportMainAxisExtent),
                             child: Column(
-                              children: _messageList.map((i) {
-                                return ChatMessageView(
-                                    message: i,
-                                    picture: widget.conv.objectPicture);
-                              }).toList(),
+                              children: [
+                                ..._historyMessages.map((i) {
+                                  return ChatMessageView(
+                                      message: i,
+                                      picture: widget.conv.objectPicture);
+                                }).toList(),
+                                ...currentConversaion.messages.reversed
+                                    .map((i) {
+                                  return ChatMessageView(
+                                      message: i,
+                                      picture: widget.conv.objectPicture);
+                                }).toList()
+                              ],
                             ),
                           ),
                         );
@@ -220,7 +246,8 @@ class _ChatPageState extends State<ChatPage> {
                             )),
                             GestureDetector(
                               onTap: () {
-                                sendMessage(_inputController.value.text);
+                                sendMessage(_inputController.value.text,
+                                    currentConversaion);
                                 _inputController.clear();
                               },
                               child: Container(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tim/pages/chat_page.dart';
 import 'package:flutter_tim/pages/home_page.dart';
 import 'package:flutter_tim/pages/message_page.dart';
+import 'package:flutter_tim/state/conversation_state.dart';
 import 'package:flutter_tim/state/message_state.dart';
 import 'package:flutter_tim/utils/scroll_behaviors.dart';
 import 'package:flutter_tim/widgets/enter_exit_route.dart';
@@ -86,11 +87,12 @@ class _MessageItemState extends State<MessageItem> {
           return '六';
         case 7:
           return '日';
-        default: return '';
+        default:
+          return '';
       }
     }
-    
-    DateTime now = DateTime.now().add(Duration(hours:8));
+
+    DateTime now = DateTime.now().add(Duration(hours: 8));
     if (now.day - sendTime.day > 0) {
       return ('星期${_numToWord(sendTime.weekday)}');
     } else {
@@ -178,32 +180,38 @@ class _MessageItemState extends State<MessageItem> {
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
-                                      Text(
-                                        _genTime(
-                                            widget.data.messages.last.time),
-                                        style: TextStyle(
-                                            color: Color(0xff666666),
-                                            fontSize: 14.0,
-                                            fontWeight: FontWeight.normal),
-                                      )
+                                      widget.data.messages.isNotEmpty
+                                          ? Text(
+                                              _genTime(widget.data.messages.first.time),
+                                              style: TextStyle(
+                                                  color: Color(0xff666666),
+                                                  fontSize: 14.0,
+                                                  fontWeight:
+                                                      FontWeight.normal),
+                                            )
+                                          : Container()
                                     ],
                                   ),
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 10),
-                                        child: Text(
-                                          widget.data.messages.last.content,
-                                          style: TextStyle(
-                                              color: Color(0xff666666),
-                                              fontSize: 14.0,
-                                              fontWeight: FontWeight.normal),
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
+                                      widget.data.messages.isNotEmpty
+                                          ? Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10),
+                                              child: Text(
+                                                widget.data.messages.first
+                                                    .content,
+                                                style: TextStyle(
+                                                    color: Color(0xff666666),
+                                                    fontSize: 14.0,
+                                                    fontWeight:
+                                                        FontWeight.normal),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            )
+                                          : Container(),
                                       Icon(Icons.remove_circle)
                                     ],
                                   )

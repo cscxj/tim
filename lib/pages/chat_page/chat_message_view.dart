@@ -14,7 +14,7 @@ class ChatMessageView extends StatefulWidget {
         super(key: key);
 
   final bool isShowName;
-  final CMessage message;
+  final MessageEntity message;
   final String name;
   final String picture;
 
@@ -64,7 +64,8 @@ class _ChatMessageViewState extends State<ChatMessageView> {
                 child: Container(
                   padding: EdgeInsets.all(12.0),
                   decoration: BoxDecoration(
-                      color: Colors.white,
+                      color:
+                          widget.message.isMeSend ? Colors.blue[200] : Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(5.0))),
                   child: Text(
                     widget.message.content,

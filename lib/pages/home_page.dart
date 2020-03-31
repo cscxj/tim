@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tim/client.dart';
 
 import 'package:flutter_tim/pages/contacts_page.dart';
-import 'package:flutter_tim/pages/test.dart';
 import 'package:flutter_tim/pages/message_page.dart';
+import 'package:flutter_tim/state/conversation_state.dart';
 import 'package:flutter_tim/state/message_state.dart';
 import 'package:flutter_tim/state/user_state.dart';
 import 'package:provider/provider.dart';
 import './work_page.dart';
+import 'dart:convert' as cv;
 
 class HomePage extends StatefulWidget {
   @override
@@ -20,25 +21,37 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Client.connect(Provider.of<UserState>(context,listen: false).username);
+      Client.connect(Provider.of<UserState>(context, listen: false).username);
       print('连接到Socket服务器');
-      Client.channel.stream.listen((event) {
 
+      Client.channel.stream.listen((event) {
         // 模拟接收消息，现在可以收到消息了，还要还发送消息的数据，改成json数据
         print(event);
-        Provider.of<MessageState>(context,listen: false).pushMsg(CMessage(
-          time: DateTime.now(),
-          content: event,
-        ), '1000001');
+        Map<String, dynamic> ms = cv.jsonDecode(event);
+
+        Provider.of<ConversationState>(context, listen: false).pushMessage(
+            MessageEntity(
+              time: ms['time'] is int
+                  ? DateTime.fromMillisecondsSinceEpoch(ms['time'])
+                  : DateTime.parse(ms['time']),
+              content: ms['content'],
+            ),
+            ms['master']);
       });
     });
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    Client.channel.sink.close();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //key: homePageKey,
       body: IndexedStack(
         index: _currentPage,
         children: <Widget>[MessagePage(), ContactsPage(), WorkPage()],
@@ -96,4 +109,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-

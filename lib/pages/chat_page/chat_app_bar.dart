@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final String title;
+
+  const ChatAppBar({Key key,@required this.title}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -37,7 +41,7 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
               )),
               ConstrainedBox(
                   child: Text(
-                    'flutter开发者社区',
+                    this.title,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                         color: Colors.black.withOpacity(.9), fontSize: 20.0),

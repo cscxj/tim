@@ -5,8 +5,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tim/api/api.dart';
 import 'package:flutter_tim/pages/home_page.dart';
+import 'package:flutter_tim/pages/register_page.dart';
 import 'package:flutter_tim/state/user_state.dart';
 import 'package:flutter_tim/utils/keyboard_detector.dart';
+import 'package:flutter_tim/widgets/enter_exit_route.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:convert' as cv;
 
@@ -37,13 +39,20 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
   bool _keyBoardShow = false;
 
-  Widget getLinkText(String text, {size: 14.0}) {
-    return Padding(
-        padding: EdgeInsets.all(10.0),
-        child: Text(
-          text,
-          style: TextStyle(color: Colors.blue, fontSize: size),
-        ));
+  Widget getLinkText(
+    String text, {
+    size: 14.0,
+    Function onPress,
+  }) {
+    return GestureDetector(
+      onTap: onPress,
+      child: Padding(
+          padding: EdgeInsets.all(10.0),
+          child: Text(
+            text,
+            style: TextStyle(color: Colors.blue, fontSize: size),
+          )),
+    );
   }
 
   Widget getInputBox(
@@ -92,19 +101,18 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         print(data['data']);
         Map user = data['data'];
         state.update(
-          username: user['id'].toString(),
-          name: user['name'],
-          grade: user['grade'],
-          phone: user['phone'],
-          email: user['email'],
-          sex: int.parse(user['sex']),
-          birthday: user['birthday'],
-          address: user['address'],
-          hometown: user['hometown'],
-          school: user['school'],
-          company: user['company'],
-          picture: user['picture']
-        );
+            username: user['id'].toString(),
+            name: user['name'],
+            grade: user['grade'],
+            phone: user['phone'],
+            email: user['email'],
+            sex: int.parse(user['sex']),
+            birthday: user['birthday'],
+            address: user['address'],
+            hometown: user['hometown'],
+            school: user['school'],
+            company: user['company'],
+            picture: user['picture']);
         Navigator.push(context, CupertinoPageRoute(builder: (_) {
           return HomePage();
         }));
@@ -395,7 +403,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
-                                getLinkText('新用户注册'),
+                                getLinkText('新用户注册',onPress: (){
+                                  Navigator.push(context, EnterExitRoute(
+                                    exitPage: widget,
+                                    enterPage: RegisterPage()
+                                  ));
+                                }),
                                 _formEnterAnimation.value < .5
                                     ? getLinkText('了解TIM')
                                     : getLinkText('无法登录?')

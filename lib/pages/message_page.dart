@@ -2,11 +2,13 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_tim/client.dart';
 
 import 'package:flutter_tim/pages/chat_page.dart';
 import 'package:flutter_tim/pages/contacts_page.dart';
+import 'package:flutter_tim/pages/friend_info_page.dart';
 import 'package:flutter_tim/pages/home_page.dart';
 import 'package:flutter_tim/pages/login_page.dart';
 import 'package:flutter_tim/pages/message_page/auto_app_bar.dart';
@@ -14,6 +16,7 @@ import 'package:flutter_tim/pages/message_page/message_item.dart';
 import 'package:flutter_tim/state/conversation_state.dart';
 import 'package:flutter_tim/state/message_state.dart';
 import 'package:flutter_tim/state/user_state.dart';
+import 'package:flutter_tim/utils/tim_refresh_header.dart';
 import 'package:flutter_tim/widgets/enter_exit_route.dart';
 import 'package:flutter_tim/widgets/fake_search_bar.dart';
 import 'package:flutter_tim/api/api.dart';
@@ -111,7 +114,7 @@ class _MessagePageState extends State<MessagePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
+      //extendBodyBehindAppBar: true,
       appBar: AutoAppBar(
           controler: _appBarControler,
           title: '消息',
@@ -119,7 +122,7 @@ class _MessagePageState extends State<MessagePage> {
             onTap: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (BuildContext context) {
-                return ContactsPage();
+                return FriendInfoPage();
               }));
             },
             child: SvgPicture.asset(
@@ -142,26 +145,30 @@ class _MessagePageState extends State<MessagePage> {
           )),
       drawerDragStartBehavior: DragStartBehavior.down,
       drawerEdgeDragWidth: 300.0,
-      body: ListView(
-        controller: _scrollController,
-        physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-        children: <Widget>[
-          FakeSearchBar(),
-          ...Provider.of<ConversationState>(context)
-              .data
-              .map((conv) {
-            return MessageItem(
-              data: conv,
-              onTap: () {
-                Navigator.push(
-                    context,
-                    EnterExitRoute(
-                        enterPage: ChatPage(conv: conv),
-                        exitPage: context.widget));
-              },
-            );
-          }).toList()
-        ],
+      body: EasyRefresh(
+        header: TimRefreshHeader(),
+        onRefresh: () {
+          return Future.delayed(Duration(milliseconds: 2000));
+        },
+        child: ListView(
+          controller: _scrollController,
+          //physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+          children: <Widget>[
+            FakeSearchBar(),
+            ...Provider.of<ConversationState>(context).data.map((conv) {
+              return MessageItem(
+                data: conv,
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      EnterExitRoute(
+                          enterPage: ChatPage(conv: conv),
+                          exitPage: context.widget));
+                },
+              );
+            }).toList()
+          ],
+        ),
       ),
     );
   }

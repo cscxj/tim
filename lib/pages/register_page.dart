@@ -2,8 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_tim/api/api.dart';
-import 'package:flutter_tim/pages/register_page/cell_Input_view.dart';
-import 'package:flutter_tim/utils/scroll_behaviors.dart';
 import 'package:flutter_tim/widgets/tim_dialog.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 

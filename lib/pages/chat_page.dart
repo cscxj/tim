@@ -196,7 +196,7 @@ class _ChatPageState extends State<ChatPage> {
                         );
                       }),
                   onLoad: () async {
-                    await _loadingData(currentConversaion.messages.length);
+                    // await _loadingData(currentConversaion.messages.length);
                   },
                   slivers: <Widget>[
                     SliverLayoutBuilder(

@@ -21,10 +21,8 @@ import 'package:flutter_tim/widgets/enter_exit_route.dart';
 import 'package:flutter_tim/widgets/fake_search_bar.dart';
 import 'package:flutter_tim/api/api.dart';
 import 'package:provider/provider.dart';
-import 'package:web_socket_channel/io.dart';
 import 'dart:convert' as cv;
 
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 class MessagePage extends StatefulWidget {
   @override
@@ -52,39 +50,39 @@ class _MessagePageState extends State<MessagePage> {
 
   onMounted(_) {
     // 请求会话数据
-    Dio().post(Api.getConversations, queryParameters: {
-      'username': Provider.of<UserState>(this.context, listen: false).username
-    }).then((value) {
-      List a = cv.jsonDecode(value.data)[0];
-      Provider.of<ConversationState>(this.context, listen: false)
-          .init(a.map((item) {
-        // 这个Init执行完之后，消息列表的数据框架会显示出来
-        return ConversationEntity(
-            objectId: item['id'].toString(),
-            objectName: item['remark'] ?? item['name'],
-            objectPicture: item['picture'] ?? 'assets/touXiang.jpg',
-            messages: []);
-      }).toList());
-      setState(() {});
-    }).whenComplete(() {
-      Provider.of<ConversationState>(context, listen: false).data.forEach((c) {
-        Dio().post(Api.getMessages, queryParameters: {
-          'username':
-              Provider.of<UserState>(this.context, listen: false).username,
-          'friend': c.objectId,
-          'startIndex': 0
-        }).then((res) {
-          List ms = cv.jsonDecode(res.data)[0];
-          c.messages = (ms.map((m) {
-            return MessageEntity(
-                time: DateTime.parse(m['time']),
-                content: m['content'],
-                isMeSend: m['is_me_send'] == 1);
-          }).toList());
-          setState(() {});
-        });
-      });
-    });
+    // Dio().post(Api.getConversations, queryParameters: {
+    //   'username': Provider.of<UserState>(this.context, listen: false).username
+    // }).then((value) {
+    //   List a = cv.jsonDecode(value.data)[0];
+    //   Provider.of<ConversationState>(this.context, listen: false)
+    //       .init(a.map((item) {
+    //     // 这个Init执行完之后，消息列表的数据框架会显示出来
+    //     return ConversationEntity(
+    //         objectId: item['id'].toString(),
+    //         objectName: item['remark'] ?? item['name'],
+    //         objectPicture: item['picture'] ?? 'assets/touXiang.jpg',
+    //         messages: []);
+    //   }).toList());
+    //   setState(() {});
+    // }).whenComplete(() {
+    //   Provider.of<ConversationState>(context, listen: false).data.forEach((c) {
+    //     Dio().post(Api.getMessages, queryParameters: {
+    //       'username':
+    //           Provider.of<UserState>(this.context, listen: false).username,
+    //       'friend': c.objectId,
+    //       'startIndex': 0
+    //     }).then((res) {
+    //       List ms = cv.jsonDecode(res.data)[0];
+    //       c.messages = (ms.map((m) {
+    //         return MessageEntity(
+    //             time: DateTime.parse(m['time']),
+    //             content: m['content'],
+    //             isMeSend: m['is_me_send'] == 1);
+    //       }).toList());
+    //       setState(() {});
+    //     });
+    //   });
+    // });
   }
 
   double preOffset = 0.0;

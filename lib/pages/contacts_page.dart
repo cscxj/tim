@@ -41,23 +41,35 @@ class _ContactsPageState extends State<ContactsPage> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      String username =
-          Provider.of<UserState>(this.context, listen: false).username;
-      Dio().post(Api.getGroups, queryParameters: {'username': username}).then(
-          (v) {
-        List data = cv.jsonDecode(v.data.toString());
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   String username =
+    //       Provider.of<UserState>(this.context, listen: false).username;
+    //   Dio().post(Api.getGroups, queryParameters: {'username': username}).then(
+    //       (v) {
+    //     List data = cv.jsonDecode(v.data.toString());
 
-        groups.addAll(data
-            .map((i) => ContactGroup(
-                name: i['name'],
-                id: i['id'].toString(),
-                onlineCount: 0,
-                friends: []))
-            .toList());
-        print(groups.length);
-      });
-    });
+    //     groups.addAll(data
+    //         .map((i) => ContactGroup(
+    //             name: i['name'],
+    //             id: i['id'].toString(),
+    //             onlineCount: 0,
+    //             friends: []))
+    //         .toList());
+    //     print(groups.length);
+    //   });
+    // });
+
+    // 假数据
+    groups = [
+      ContactGroup(id: "1", name: "我的好友", onlineCount: 11, friends: [
+        Contact(picture: "assets/touXiang.jpg", name: "阿明", online: true),
+        Contact(picture: "assets/touXiang.jpg", name: "a强", online: true)
+      ]),
+      ContactGroup(id: "1", name: "老师", onlineCount: 11, friends: [
+        Contact(picture: "assets/touXiang.jpg", name: "狗贼", online: true),
+        Contact(picture: "assets/touXiang.jpg", name: "妈蛋", online: true)
+      ])
+    ];
 
     super.initState();
   }

@@ -20,18 +20,18 @@ class _GroupItemState extends State<GroupItem> {
 
   @override
   void initState() {
-    Dio().post(Api.getFriends,
-        queryParameters: {'groupId': widget.data.id}).then((v) {
-      List friends = cv.jsonDecode(v.data.toString());
-      widget.data.friends = List<Contact>.generate(friends.length, (index) {
-        return Contact(
-            name: friends[index]['remark'] ??
-                friends[index]['name'], // 有备注就显示备注，没有备注显示用户昵称
-            picture: 'assets/touXiang.jpg',
-            online: false);
-      });
-      setState(() {});
-    });
+    // Dio().post(Api.getFriends,
+    //     queryParameters: {'groupId': widget.data.id}).then((v) {
+    //   List friends = cv.jsonDecode(v.data.toString());
+    //   widget.data.friends = List<Contact>.generate(friends.length, (index) {
+    //     return Contact(
+    //         name: friends[index]['remark'] ??
+    //             friends[index]['name'], // 有备注就显示备注，没有备注显示用户昵称
+    //         picture: 'assets/touXiang.jpg',
+    //         online: false);
+    //   });
+    //   setState(() {});
+    // });
     super.initState();
   }
 

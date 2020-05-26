@@ -91,34 +91,38 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         Fluttertoast.showToast(msg: '用户名和密码不能为空！');
         return;
       }
-      Response<String> response = await _dio.post(Api.login, queryParameters: {
-        'username': _userInputController.text,
-        'password': _pwdInputController.text
-      });
-      Map<String, dynamic> data = cv.jsonDecode(response.data);
 
-      if (data['result']) {
-        print(data['data']);
-        Map user = data['data'];
-        state.update(
-            username: user['id'].toString(),
-            name: user['name'],
-            grade: user['grade'],
-            phone: user['phone'],
-            email: user['email'],
-            sex: int.parse(user['sex']),
-            birthday: user['birthday'],
-            address: user['address'],
-            hometown: user['hometown'],
-            school: user['school'],
-            company: user['company'],
-            picture: user['picture']);
-        Navigator.push(context, CupertinoPageRoute(builder: (_) {
-          return HomePage();
-        }));
-      } else {
-        Fluttertoast.showToast(msg: data['msg']);
-      }
+      Navigator.push(context, CupertinoPageRoute(builder: (_){
+        return HomePage();
+      }));
+      // Response<String> response = await _dio.post(Api.login, queryParameters: {
+      //   'username': _userInputController.text,
+      //   'password': _pwdInputController.text
+      // });
+      // Map<String, dynamic> data = cv.jsonDecode(response.data);
+
+      // if (data['result']) {
+      //   print(data['data']);
+      //   Map user = data['data'];
+      //   state.update(
+      //       username: user['id'].toString(),
+      //       name: user['name'],
+      //       grade: user['grade'],
+      //       phone: user['phone'],
+      //       email: user['email'],
+      //       sex: int.parse(user['sex']),
+      //       birthday: user['birthday'],
+      //       address: user['address'],
+      //       hometown: user['hometown'],
+      //       school: user['school'],
+      //       company: user['company'],
+      //       picture: user['picture']);
+      //   Navigator.push(context, CupertinoPageRoute(builder: (_) {
+      //     return HomePage();
+      //   }));
+      // } else {
+      //   Fluttertoast.showToast(msg: data['msg']);
+      // }
     } else if (_welcomeTextAnimaion.status != AnimationStatus.forward) {
       // 动画正在执行时不能触发
       _animationController.forward();

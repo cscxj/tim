@@ -21,23 +21,23 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Client.connect(Provider.of<UserState>(context, listen: false).username);
-      print('连接到Socket服务器');
+      // Client.connect(Provider.of<UserState>(context, listen: false).username);
+      // print('连接到Socket服务器');
 
-      Client.channel.stream.listen((event) {
-        // 模拟接收消息，现在可以收到消息了，还要还发送消息的数据，改成json数据
-        print(event);
-        Map<String, dynamic> ms = cv.jsonDecode(event);
+      // Client.channel.stream.listen((event) {
+      //   // 模拟接收消息，现在可以收到消息了，还要还发送消息的数据，改成json数据
+      //   print(event);
+      //   Map<String, dynamic> ms = cv.jsonDecode(event);
 
-        Provider.of<ConversationState>(context, listen: false).pushMessage(
-            MessageEntity(
-              time: ms['time'] is int
-                  ? DateTime.fromMillisecondsSinceEpoch(ms['time'])
-                  : DateTime.parse(ms['time']),
-              content: ms['content'],
-            ),
-            ms['master']);
-      });
+      //   Provider.of<ConversationState>(context, listen: false).pushMessage(
+      //       MessageEntity(
+      //         time: ms['time'] is int
+      //             ? DateTime.fromMillisecondsSinceEpoch(ms['time'])
+      //             : DateTime.parse(ms['time']),
+      //         content: ms['content'],
+      //       ),
+      //       ms['master']);
+      // });
     });
 
     super.initState();

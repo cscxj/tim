@@ -13,6 +13,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:convert' as cv;
 
 import 'package:provider/provider.dart';
+import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -92,6 +93,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         return;
       }
 
+
+      //测试
       Navigator.pushAndRemoveUntil(context,
           new PageRouteBuilder(pageBuilder: (_, anim1, anim2) {
         return FadeTransition(
@@ -99,6 +102,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           child: HomePage(),
         );
       }), (route) => route == null);
+
+
       // Response<String> response = await _dio.post(Api.login, queryParameters: {
       //   'username': _userInputController.text,
       //   'password': _pwdInputController.text

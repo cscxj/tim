@@ -14,6 +14,7 @@ import 'package:flutter_tim/pages/chat_page/chat_message_view.dart';
 import 'package:flutter_tim/state/conversation_state.dart';
 import 'package:flutter_tim/state/message_state.dart';
 import 'package:flutter_tim/state/user_state.dart';
+import 'package:flutter_tim/widgets/scroll_return_page.dart';
 import 'package:provider/provider.dart';
 import 'dart:convert' as cv;
 
@@ -50,11 +51,10 @@ class _ChatPageState extends State<ChatPage> {
 
   void sendMessage(String msg, ConversationEntity conv) {
     //Client.channel.sink.add(msg + '/' + conv.objectId.toString());
-    MessageEntity message = MessageEntity(
-        time: DateTime.now(),
-        content: msg,
-        isMeSend: true);
-    Provider.of<ConversationState>(context,listen: false).pushMessage(message,conv.objectId);
+    MessageEntity message =
+        MessageEntity(time: DateTime.now(), content: msg, isMeSend: true);
+    Provider.of<ConversationState>(context, listen: false)
+        .pushMessage(message, conv.objectId);
 
     setState(() {});
     _scrollController.animateTo(.0,
@@ -125,12 +125,7 @@ class _ChatPageState extends State<ChatPage> {
       }
     });
 
-    return GestureDetector(
-      onHorizontalDragEnd: (d) {
-        if (d.velocity.pixelsPerSecond.dx > 0) {
-          Navigator.pop(context);
-        }
-      },
+    return ScrollReturnPage(
       child: Scaffold(
           resizeToAvoidBottomPadding: true,
           appBar: ChatAppBar(

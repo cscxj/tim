@@ -49,7 +49,7 @@ class _ChatPageState extends State<ChatPage> {
   double oldLayoutLength = .0; // 加载到新数据的新增布局长度
 
   void sendMessage(String msg, ConversationEntity conv) {
-    Client.channel.sink.add(msg + '/' + conv.objectId.toString());
+    //Client.channel.sink.add(msg + '/' + conv.objectId.toString());
     MessageEntity message = MessageEntity(
         time: DateTime.now(),
         content: msg,

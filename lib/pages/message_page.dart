@@ -12,6 +12,7 @@ import 'package:flutter_tim/pages/friend_info_page.dart';
 import 'package:flutter_tim/pages/home_page.dart';
 import 'package:flutter_tim/pages/login_page.dart';
 import 'package:flutter_tim/pages/message_page/auto_app_bar.dart';
+import 'package:flutter_tim/pages/message_page/func_menu.dart';
 import 'package:flutter_tim/pages/message_page/message_item.dart';
 import 'package:flutter_tim/state/conversation_state.dart';
 import 'package:flutter_tim/state/message_state.dart';
@@ -19,10 +20,11 @@ import 'package:flutter_tim/state/user_state.dart';
 import 'package:flutter_tim/utils/tim_refresh_header.dart';
 import 'package:flutter_tim/widgets/enter_exit_route.dart';
 import 'package:flutter_tim/widgets/fake_search_bar.dart';
+
 import 'package:flutter_tim/api/api.dart';
 import 'package:provider/provider.dart';
-import 'dart:convert' as cv;
 
+import 'dart:convert' as cv;
 
 class MessagePage extends StatefulWidget {
   @override
@@ -134,6 +136,24 @@ class _MessagePageState extends State<MessagePage> {
               // Navigator.push(context, CupertinoPageRoute(builder: (_) {
               //   return LoginPage();
               // }));
+
+              showDialog(
+                  context: context,
+                  builder: (_) {
+                    return FuncMenu(
+                      items: [
+                        FuncItem(
+                            icon: 'assets/svg/tim_create_chat.svg',
+                            text: "创建群聊"),
+                        FuncItem(
+                            icon: 'assets/svg/tim_add_friend.svg',
+                            text: "添加朋友"),
+                        FuncItem(icon: 'assets/svg/tim_scan.svg', text: '扫一扫'),
+                        FuncItem(
+                            icon: 'assets/svg/tim_folder.svg', text: '面对面快传')
+                      ],
+                    );
+                  });
             },
             child: SvgPicture.asset(
               'assets/svg/tim_add.svg',

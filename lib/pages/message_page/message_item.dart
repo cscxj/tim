@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tim/pages/chat_page.dart';
 import 'package:flutter_tim/pages/home_page.dart';
 import 'package:flutter_tim/pages/message_page.dart';
+import 'package:flutter_tim/pages/message_page/sticky_tag.dart';
 import 'package:flutter_tim/state/conversation_state.dart';
 import 'package:flutter_tim/state/message_state.dart';
 import 'package:flutter_tim/utils/scroll_behaviors.dart';
@@ -182,7 +183,8 @@ class _MessageItemState extends State<MessageItem> {
                                       ),
                                       widget.data.messages.isNotEmpty
                                           ? Text(
-                                              _genTime(widget.data.messages.first.time),
+                                              _genTime(widget
+                                                  .data.messages.first.time),
                                               style: TextStyle(
                                                   color: Color(0xff666666),
                                                   fontSize: 14.0,
@@ -212,7 +214,27 @@ class _MessageItemState extends State<MessageItem> {
                                               ),
                                             )
                                           : Container(),
-                                      Icon(Icons.remove_circle)
+                                      StickyTag(
+                                        onLoosen: () {
+                                          setState(() {});
+                                        },
+                                        maxContactDistance: 80,
+                                        size: 16,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              color: Colors.red,
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(100))),
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 6, vertical: 3),
+                                          child: Text(
+                                            '2',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 10),
+                                          ),
+                                        ),
+                                      )
                                     ],
                                   )
                                 ],

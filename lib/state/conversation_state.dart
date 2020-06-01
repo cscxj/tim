@@ -29,7 +29,7 @@ class ConversationState with ChangeNotifier {
           objectPicture: "assets/touXiang.jpg",
           messages: [
             MessageEntity(
-                time: DateTime.now(), content: "用不用下载样式包？", isMeSend: false),
+                time: DateTime.now(), content: "aaa", isMeSend: false),
           ]),
       ConversationEntity(
           objectId: "1",
@@ -37,11 +37,11 @@ class ConversationState with ChangeNotifier {
           objectPicture: "assets/touXiang.jpg",
           messages: [
             MessageEntity(
-                time: DateTime.now(), content: "没有设定权限呗", isMeSend: false),
+                time: DateTime.now(), content: "bbb", isMeSend: false),
             MessageEntity(
-                time: DateTime.now(), content: "加个盒子试试", isMeSend: false),
+                time: DateTime.now(), content: "df", isMeSend: false),
             MessageEntity(
-                time: DateTime.now(), content: "好的👌", isMeSend: true),
+                time: DateTime.now(), content: "dsg👌", isMeSend: true),
           ]),
       ConversationEntity(
           objectId: "1",
@@ -49,15 +49,15 @@ class ConversationState with ChangeNotifier {
           objectPicture: "assets/touXiang.jpg",
           messages: [
             MessageEntity(
-                time: DateTime.now(), content: "有现成的插件吗", isMeSend: false),
+                time: DateTime.now(), content: "dsger", isMeSend: false),
             MessageEntity(
                 time: DateTime.now(), content: "ffmmet", isMeSend: false),
             MessageEntity(
-                time: DateTime.now(), content: "这是啥玩意", isMeSend: false),
+                time: DateTime.now(), content: "dfsgd", isMeSend: false),
             MessageEntity(
-                time: DateTime.now(), content: "pub上有，你去看看", isMeSend: true),
+                time: DateTime.now(), content: "dsgr", isMeSend: true),
             MessageEntity(
-                time: DateTime.now(), content: "哦哦哦", isMeSend: false),
+                time: DateTime.now(), content: "adsrg", isMeSend: false),
           ]),
       ConversationEntity(
           objectId: "1",
@@ -65,15 +65,15 @@ class ConversationState with ChangeNotifier {
           objectPicture: "assets/touXiang.jpg",
           messages: [
             MessageEntity(
-                time: DateTime.now(), content: "好兄弟，打王者吗", isMeSend: false),
+                time: DateTime.now(), content: "asfe", isMeSend: false),
             MessageEntity(
-                time: DateTime.now(), content: "四缺一", isMeSend: false),
+                time: DateTime.now(), content: "aefs", isMeSend: false),
             MessageEntity(
-                time: DateTime.now(), content: "不来", isMeSend: true),
+                time: DateTime.now(), content: "ss", isMeSend: true),
             MessageEntity(
-                time: DateTime.now(), content: "还么吃饭", isMeSend: false),
+                time: DateTime.now(), content: "eee", isMeSend: false),
             MessageEntity(
-                time: DateTime.now(), content: "吃完叫我", isMeSend: true),
+                time: DateTime.now(), content: "es", isMeSend: true),
           ])
     ];
   }

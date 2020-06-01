@@ -48,17 +48,18 @@ android {
 
     signingConfigs {
        release {
-           keyAlias keystoreProperties['key']
-           keyPassword keystoreProperties['111111']
-           storeFile keystoreProperties['D:/key.jks'] ? file(keystoreProperties['D:/key.jks']) : null
-           storePassword keystoreProperties['111111']
+           keyAlias keystoreProperties['keyAlias']
+           keyPassword keystoreProperties['keyPassword']
+           storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+           storePassword keystoreProperties['storePassword']
        }
-   }
-   buildTypes {
-       release {
-           signingConfig signingConfigs.release
-       }
-   }
+    }
+    //buildTypes {
+    //   release {
+    //       signingConfig signingConfigs.release
+    //   }
+    //}
+
 
     buildTypes {
        release {

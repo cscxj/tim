@@ -31,6 +31,7 @@ class _UserInfoPageState extends State<UserInfoPage>
   double _topExtend = .0; // 下拉时，头部拉长的偏移亮
 
   _initAnimation() {
+
     // 头部高度增加动画
     _animationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 400));

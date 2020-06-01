@@ -122,10 +122,9 @@ class _WorkPageState extends State<WorkPage> {
                             //Navigator.pushNamed(context, 'user_info_page');
                             Navigator.push(
                                 context,
-                                CupertinoPageRoute(
-                                    builder: (BuildContext context) {
-                                      return UserInfoPage();
-                                    }));
+                                PageRouteBuilder(pageBuilder: (_,anim1,anim2){
+                                  return UserInfoPage();
+                                }));
                           },
                           child: ClipOval(
                             child: Image.asset(Provider.of<UserState>(context).picture),

@@ -92,9 +92,13 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         return;
       }
 
-      Navigator.push(context, CupertinoPageRoute(builder: (_){
-        return HomePage();
-      }));
+      Navigator.pushAndRemoveUntil(context,
+          new PageRouteBuilder(pageBuilder: (_, anim1, anim2) {
+        return FadeTransition(
+          opacity: anim1,
+          child: HomePage(),
+        );
+      }), (route) => route == null);
       // Response<String> response = await _dio.post(Api.login, queryParameters: {
       //   'username': _userInputController.text,
       //   'password': _pwdInputController.text
@@ -407,11 +411,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
-                                getLinkText('新用户注册',onPress: (){
-                                  Navigator.push(context, EnterExitRoute(
-                                    exitPage: widget,
-                                    enterPage: RegisterPage()
-                                  ));
+                                getLinkText('新用户注册', onPress: () {
+                                  Navigator.push(
+                                      context,
+                                      EnterExitRoute(
+                                          exitPage: widget,
+                                          enterPage: RegisterPage()));
                                 }),
                                 _formEnterAnimation.value < .5
                                     ? getLinkText('了解TIM')

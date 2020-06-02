@@ -3,6 +3,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:flutter_tim/widgets/enter_exit_route.dart';
 
 class SettingItem extends StatefulWidget {
+  /// 在前面显示图标，传入位图的资源路径
+  final String icon;
+
   /// 设置项的标题
   final String title;
 
@@ -23,6 +26,15 @@ class SettingItem extends StatefulWidget {
   /// 是否为结束项，结束项没有下划线，有外边距
   final bool isLast;
 
+  /// 实现路由动画所需
+  final BuildContext containerContext;
+
+  /// 显示在item下方的说明文字
+  final String explainText;
+
+  /// 重要的设置项标题显示为主题色
+  final bool important;
+
   const SettingItem(
       {Key key,
       @required this.title,
@@ -31,14 +43,22 @@ class SettingItem extends StatefulWidget {
       this.value: false,
       this.nextPage,
       this.onPress,
-      this.isLast: false})
+      this.isLast: false,
+      @required this.containerContext,
+      this.icon,
+      this.explainText,
+      this.important: false})
       : super(key: key);
   @override
-  _SettingItemState createState() => _SettingItemState();
+  _SettingItemState createState() => _SettingItemState(value);
 }
 
 class _SettingItemState extends State<SettingItem> {
-  bool _isEnable = false;
+  bool _isEnable;
+
+  _SettingItemState(bool value) {
+    this._isEnable = value;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,13 +72,20 @@ class _SettingItemState extends State<SettingItem> {
         );
         break;
       case SettingItemType.toggle:
-        right = Switch(value: _isEnable, onChanged: (value) {});
+        right = Switch(
+            value: _isEnable,
+            onChanged: (value) {
+              setState(() {
+                _isEnable = !_isEnable;
+              });
+            });
         break;
       default:
         right = Container();
     }
 
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         FlatButton(
           color: Colors.white,
@@ -66,8 +93,11 @@ class _SettingItemState extends State<SettingItem> {
           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
           onPressed: () {
             if (widget.nextPage != null && widget.type == SettingItemType.nav) {
-              Navigator.push(context,
-                  EnterExitRoute(enterPage: widget.nextPage, exitPage: widget));
+              Navigator.push(
+                  context,
+                  EnterExitRoute(
+                      enterPage: widget.nextPage,
+                      exitPage: widget.containerContext.widget));
             } else if (widget.type == SettingItemType.toggle) {
               setState(() {
                 _isEnable = !_isEnable;
@@ -78,13 +108,26 @@ class _SettingItemState extends State<SettingItem> {
             }
           },
           child: SizedBox(
-            height: 52,
+            height: 54,
             child: Row(
               children: <Widget>[
+                widget.icon != null
+                    ? Padding(
+                        padding: EdgeInsets.only(right: 20),
+                        child: Image.asset(
+                          widget.icon,
+                          width: 24,
+                        ),
+                      )
+                    : Container(),
                 Expanded(
                     child: Text(
                   widget.title ?? "",
-                  style: TextStyle(fontSize: 16),
+                  style: TextStyle(
+                      fontSize: 16,
+                      color: widget.important
+                          ? Theme.of(context).primaryColor
+                          : Colors.black),
                 )),
                 widget.content ?? Container(),
                 right
@@ -92,11 +135,19 @@ class _SettingItemState extends State<SettingItem> {
             ),
           ),
         ),
+        widget.explainText != null
+            ? Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                child: Text(
+                  widget.explainText,
+                  style: TextStyle(color: Colors.black38, fontSize: 12),
+                ),
+              )
+            : Container(),
         widget.isLast
             ? Padding(padding: EdgeInsets.only(top: 20))
             : Divider(
                 height: 0,
-                thickness: .4,
                 indent: 14,
               )
       ],

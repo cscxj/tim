@@ -10,7 +10,7 @@ class ScrollReturnPage extends StatelessWidget {
     return GestureDetector(
       onHorizontalDragEnd: (d) {
         if (d.velocity.pixelsPerSecond.dx > 0) {
-          Navigator.pop(context);
+          Navigator.maybePop(context);
         }
       },
       child: child,

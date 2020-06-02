@@ -6,6 +6,7 @@ import 'package:flutter_tim/pages/setting_page/app_child_page.dart';
 import 'package:flutter_tim/pages/setting_page/basic_child_page.dart';
 import 'package:flutter_tim/pages/setting_page/message_child_page.dart';
 import 'package:flutter_tim/pages/setting_page/privacy_child_page.dart';
+import 'package:flutter_tim/pages/setting_page/user_child_page.dart';
 import 'package:flutter_tim/pages/setting_page/setting_item.dart';
 import 'package:flutter_tim/pages/setting_page/setting_scaffold.dart';
 import 'package:flutter_tim/widgets/scroll_return_page.dart';
@@ -23,6 +24,7 @@ class _SettingPageState extends State<SettingPage> {
         SettingItem(
           containerContext: context,
           title: '账号管理',
+          nextPage: UserChildPage(),
           content: ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: Image.asset(

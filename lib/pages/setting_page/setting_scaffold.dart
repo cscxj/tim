@@ -4,8 +4,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 class SettingScaffold extends StatelessWidget {
   final Widget body;
   final String title;
+  final String action;
+  final Function onTapAction;
 
-  const SettingScaffold({Key key, this.body, this.title}) : super(key: key);
+  const SettingScaffold(
+      {Key key, this.body, this.title, this.action, this.onTapAction})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +24,24 @@ class SettingScaffold extends StatelessWidget {
                   style: TextStyle(color: Colors.black),
                 )
               : Container(),
+          actions: action != null
+              ? [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      children: <Widget>[
+                        InkWell(
+                          onTap: onTapAction ?? () {},
+                          child: Text(
+                            action,
+                            style: TextStyle(color: Colors.black, fontSize: 16),
+                          ),
+                        )
+                      ],
+                    ),
+                  )
+                ]
+              : [],
           leading: UnconstrainedBox(
             child: InkWell(
               onTap: () {

@@ -93,7 +93,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         return;
       }
 
-
       //测试
       Navigator.pushAndRemoveUntil(context,
           new PageRouteBuilder(pageBuilder: (_, anim1, anim2) {
@@ -102,7 +101,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           child: HomePage(),
         );
       }), (route) => route == null);
-
 
       // Response<String> response = await _dio.post(Api.login, queryParameters: {
       //   'username': _userInputController.text,
@@ -206,6 +204,66 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    var welcomPanel = ClipRect(
+      clipper: WelcomTextCliper(_welcomeTextAnimaion),
+      child: Wrap(
+        direction: Axis.vertical,
+        children: <Widget>[
+          Text('欢迎来到TIM',
+              style: TextStyle(
+                fontSize: 36.0,
+                color:
+                    Colors.black.withOpacity(1.0 - _welcomeTextAnimaion.value),
+              )),
+          Text('让    工    作    更    高    效',
+              style: TextStyle(fontSize: 18.0, color: Colors.black38))
+        ],
+      ),
+    );
+
+    var inputPanel = Transform.translate(
+      offset: Offset(.0, 40.0 * _fadeInAnimation.value - 40.0),
+      child: FadeTransition(
+        opacity: _formEnterAnimation,
+        // 欢迎文字动画执行完毕之后显示文本框
+        child: _welcomeTextAnimaion.value == 1.0
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  getInputBox(
+                      controller: _userInputController,
+                      hintText: 'QQ号/手机/邮箱',
+                      inputType: TextInputType.number),
+                  Container(
+                    width: 200.0,
+                    child: Divider(
+                      height: .0,
+                      thickness: .3,
+                      color: Colors.black45.withOpacity(.2),
+                    ),
+                  ),
+                  getInputBox(
+                      controller: _pwdInputController,
+                      hideText: true,
+                      hintText: '密码',
+                      inputType: TextInputType.visiblePassword),
+                ],
+              )
+            : UnconstrainedBox(),
+      ),
+    );
+    var loginButton = FlatButton(
+      onPressed: () {
+        signIn(Provider.of<UserState>(context, listen: false));
+      },
+      padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 12.0),
+      child: Text(
+        '登 录',
+        style: TextStyle(color: Colors.white, fontSize: 16.0),
+      ),
+      color: Color(0xff2295ff),
+    );
+
     return KeyboardDetector(
         keyboardShowCallback: (isShow) {
           if (isShow &&
@@ -253,68 +311,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   height: 134.0 - (_keyBoardShow ? 34.0 : .0),
                                   child: Stack(
                                     children: <Widget>[
-                                      Transform.translate(
-                                        offset: Offset(
-                                            .0,
-                                            40.0 * _fadeInAnimation.value -
-                                                40.0),
-                                        child: FadeTransition(
-                                          opacity: _formEnterAnimation,
-                                          // 欢迎文字动画执行完毕之后显示文本框
-                                          child: _welcomeTextAnimaion.value ==
-                                                  1.0
-                                              ? Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.end,
-                                                  children: <Widget>[
-                                                    getInputBox(
-                                                        controller:
-                                                            _userInputController,
-                                                        hintText: 'QQ号/手机/邮箱',
-                                                        inputType: TextInputType
-                                                            .number),
-                                                    Container(
-                                                      width: 200.0,
-                                                      child: Divider(
-                                                        height: .0,
-                                                        thickness: .3,
-                                                        color: Colors.black45
-                                                            .withOpacity(.2),
-                                                      ),
-                                                    ),
-                                                    getInputBox(
-                                                        controller:
-                                                            _pwdInputController,
-                                                        hideText: true,
-                                                        hintText: '密码',
-                                                        inputType: TextInputType
-                                                            .visiblePassword),
-                                                  ],
-                                                )
-                                              : UnconstrainedBox(),
-                                        ),
-                                      ),
-                                      ClipRect(
-                                        clipper: WelcomTextCliper(
-                                            _welcomeTextAnimaion),
-                                        child: Wrap(
-                                          direction: Axis.vertical,
-                                          children: <Widget>[
-                                            Text('欢迎来到TIM',
-                                                style: TextStyle(
-                                                  fontSize: 36.0,
-                                                  color: Colors.black
-                                                      .withOpacity(1.0 -
-                                                          _welcomeTextAnimaion
-                                                              .value),
-                                                )),
-                                            Text('让    工    作    更    高    效',
-                                                style: TextStyle(
-                                                    fontSize: 18.0,
-                                                    color: Colors.black38))
-                                          ],
-                                        ),
-                                      ),
+                                      inputPanel,
+                                      welcomPanel,
                                     ],
                                   ),
                                 )),
@@ -342,22 +340,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                     opacity: _fadeInAnimation,
                                     child: Column(
                                       children: <Widget>[
-                                        FlatButton(
-                                          onPressed: () {
-                                            signIn(Provider.of<UserState>(
-                                                context,
-                                                listen: false));
-                                          },
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 80.0, vertical: 12.0),
-                                          child: Text(
-                                            '登 录',
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 16.0),
-                                          ),
-                                          color: Color(0xff2295ff),
-                                        ),
+                                        loginButton,
                                         _welcomeTextAnimaion.value < .5
                                             ? getLinkText('使用QQ一键登录',
                                                 size: 12.0)

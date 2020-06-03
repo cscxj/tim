@@ -46,15 +46,61 @@ class _HomePageState extends State<HomePage> {
   @override
   void dispose() {
     super.dispose();
-    Client.channel.sink.close();
+    //Client.channel.sink.close();
   }
 
   @override
   Widget build(BuildContext context) {
+    var bottomNavigationBar2 = BottomNavigationBar(
+        elevation: 0,
+        onTap: (index) {
+          setState(() {
+            _currentPage = index;
+          });
+        },
+        currentIndex: _currentPage,
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+              title: Container(),
+              icon: Image.asset(
+                'assets/message.png',
+                width: 30,
+              ),
+              activeIcon: Image.asset(
+                'assets/message_ed.png',
+                width: 30,
+              )),
+          BottomNavigationBarItem(
+              title: Container(),
+              icon: Image.asset(
+                'assets/document.png',
+                width: 30,
+              ),
+              activeIcon: Image.asset(
+                'assets/document_ed.png',
+                width: 30,
+              )),
+          BottomNavigationBarItem(
+              title: Container(),
+              icon: Image.asset(
+                'assets/tool.png',
+                width: 30,
+              ),
+              activeIcon: Image.asset(
+                'assets/tool_ed.png',
+                width: 30,
+              )),
+        ]);
     return Scaffold(
       body: IndexedStack(
         index: _currentPage,
-        children: <Widget>[MessagePage(), ContactsPage(), WorkPage()],
+        children: <Widget>[
+          MessagePage(
+            homeContext: context,
+          ),
+          ContactsPage(),
+          WorkPage()
+        ],
       ),
       bottomNavigationBar: Wrap(
         children: <Widget>[
@@ -63,47 +109,7 @@ class _HomePageState extends State<HomePage> {
             thickness: .5,
           ),
           PreferredSize(
-              child: BottomNavigationBar(
-                  elevation: 0,
-                  onTap: (index) {
-                    setState(() {
-                      _currentPage = index;
-                    });
-                  },
-                  currentIndex: _currentPage,
-                  items: <BottomNavigationBarItem>[
-                    BottomNavigationBarItem(
-                        title: Container(),
-                        icon: Image.asset(
-                          'assets/message.png',
-                          width: 30,
-                        ),
-                        activeIcon: Image.asset(
-                          'assets/message_ed.png',
-                          width: 30,
-                        )),
-                    BottomNavigationBarItem(
-                        title: Container(),
-                        icon: Image.asset(
-                          'assets/document.png',
-                          width: 30,
-                        ),
-                        activeIcon: Image.asset(
-                          'assets/document_ed.png',
-                          width: 30,
-                        )),
-                    BottomNavigationBarItem(
-                        title: Container(),
-                        icon: Image.asset(
-                          'assets/tool.png',
-                          width: 30,
-                        ),
-                        activeIcon: Image.asset(
-                          'assets/tool_ed.png',
-                          width: 30,
-                        )),
-                  ]),
-              preferredSize: Size.fromHeight(48))
+              child: bottomNavigationBar2, preferredSize: Size.fromHeight(48))
         ],
       ),
     );

@@ -27,6 +27,11 @@ import 'package:provider/provider.dart';
 import 'dart:convert' as cv;
 
 class MessagePage extends StatefulWidget {
+
+  final BuildContext homeContext;
+
+  const MessagePage({Key key,@required this.homeContext}) : super(key: key);
+  
   @override
   _MessagePageState createState() => _MessagePageState();
 }
@@ -181,7 +186,7 @@ class _MessagePageState extends State<MessagePage> {
                       context,
                       EnterExitRoute(
                           enterPage: ChatPage(conv: conv),
-                          exitPage: context.widget));
+                          exitPage: widget.homeContext.widget));
                 },
               );
             }).toList()

@@ -18,6 +18,8 @@ import 'package:flutter_tim/widgets/scroll_return_page.dart';
 import 'package:provider/provider.dart';
 import 'dart:convert' as cv;
 
+import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
+
 class ChatPage extends StatefulWidget {
   final ConversationEntity conv;
 
@@ -49,8 +51,13 @@ class _ChatPageState extends State<ChatPage> {
 
   double oldLayoutLength = .0; // 加载到新数据的新增布局长度
 
-  void sendMessage(String msg, ConversationEntity conv) {
-    //Client.channel.sink.add(msg + '/' + conv.objectId.toString());
+  Future<void> sendMessage(String msg, ConversationEntity conv) async {
+    // 发送消息
+    TextMessage txtMessage = TextMessage.obtain(msg);
+    Message m = await RongIMClient.sendMessage(
+        RCConversationType.Private, '73', txtMessage);
+    print("麻利麻利哄 " + m.senderUserId);
+    // 保存到本地
     MessageEntity message =
         MessageEntity(time: DateTime.now(), content: msg, isMeSend: true);
     Provider.of<ConversationState>(context, listen: false)

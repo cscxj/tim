@@ -2,7 +2,9 @@ import 'package:flutter/foundation.dart';
 
 class UserState with ChangeNotifier {
   String username;
+
   String name;
+  String password;
   int grade;
   String phone;
   String email;
@@ -13,6 +15,7 @@ class UserState with ChangeNotifier {
   String school;
   String company;
   String picture;
+  String token;
 
   UserState(
       {@required username,
@@ -26,7 +29,9 @@ class UserState with ChangeNotifier {
       hometown: '未填写',
       school: '未填写',
       company: '未填写',
-      picture: 'assets/touXiang.jpg'}) {
+      picture: 'assets/touXiang.jpg',
+      token,
+      password}) {
     this.username = username ?? '12345678';
     this.name = name ?? '新用户';
     this.grade = grade ?? 1;
@@ -39,6 +44,8 @@ class UserState with ChangeNotifier {
     this.school = school ?? '未填写';
     this.company = company ?? '未填写';
     this.picture = picture ?? 'assets/touXiang.jpg';
+    this.token = token ?? "";
+    this.password = password ?? "";
   }
 
   update(
@@ -53,7 +60,9 @@ class UserState with ChangeNotifier {
       hometown,
       school,
       company,
-      picture}) {
+      picture,
+      token,
+      password}) {
     this.username = username ?? '12345678';
     this.name = name ?? '新用户';
     this.grade = grade ?? 1;
@@ -66,6 +75,8 @@ class UserState with ChangeNotifier {
     this.school = school ?? '未填写';
     this.company = company ?? '未填写';
     this.picture = picture ?? 'assets/touXiang.jpg';
+    this.token = token ?? "";
+    this.password = password ?? "";
 
     notifyListeners();
   }

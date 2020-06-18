@@ -136,7 +136,7 @@ class _WorkPageState extends State<WorkPage> {
                             }));
                           },
                           child: ClipOval(
-                            child: Image.asset(
+                            child: Image.network(
                                 Provider.of<UserState>(context).picture),
                           ),
                         ),

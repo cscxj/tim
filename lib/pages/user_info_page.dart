@@ -31,7 +31,6 @@ class _UserInfoPageState extends State<UserInfoPage>
   double _topExtend = .0; // 下拉时，头部拉长的偏移亮
 
   _initAnimation() {
-
     // 头部高度增加动画
     _animationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 400));
@@ -53,7 +52,7 @@ class _UserInfoPageState extends State<UserInfoPage>
 
     // AppBar 的背景和标题渐变动画
     _animationController3 =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 400));
+        AnimationController(vsync: this, duration: Duration(milliseconds: 600));
     _animation3 = Tween(begin: .0, end: 1.0).animate(_animationController3)
       ..addListener(() {
         setState(() {});
@@ -80,7 +79,7 @@ class _UserInfoPageState extends State<UserInfoPage>
             _topExtend = -_scrollController.offset;
           });
         }
-        bool exceed = _scrollController.offset < 60;
+        bool exceed = _scrollController.offset < 100;
         if (_isStick != exceed) {
           // 防止频繁build
           if (_isStick) {
@@ -207,7 +206,7 @@ class _UserInfoPageState extends State<UserInfoPage>
                               fit: BoxFit.cover),
                           child: LayoutBuilder(
                             builder: (_, constraints) {
-                              return Image.asset(
+                              return Image.network(
                                 userState.picture,
                                 fit: BoxFit.cover,
                                 height: constraints.maxHeight,

@@ -7,6 +7,7 @@ import 'package:flutter_tim/state/conversation_state.dart';
 import 'package:flutter_tim/state/message_state.dart';
 import 'package:flutter_tim/state/user_state.dart';
 import 'package:provider/provider.dart';
+import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 import './work_page.dart';
 import 'dart:convert' as cv;
 
@@ -38,6 +39,16 @@ class _HomePageState extends State<HomePage> {
       //       ),
       //       ms['master']);
       // });
+
+      RongIMClient.init('vnroth0kvls5o');
+
+      RongIMClient.connect(Provider.of<UserState>(context, listen: false).token,
+          (code, userId) => {print(userId)});
+
+      RongIMClient.onMessageReceivedWrapper =
+          (Message msg, int left, bool hasPackage, bool offline) {
+        print("离线消息:" + msg.messageId.toString() + " left:" + left.toString());
+      };
     });
 
     super.initState();

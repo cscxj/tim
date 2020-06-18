@@ -84,6 +84,16 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     );
   }
 
+  navToHome() {
+    Navigator.pushAndRemoveUntil(context,
+        new PageRouteBuilder(pageBuilder: (_, anim1, anim2) {
+      return FadeTransition(
+        opacity: anim1,
+        child: HomePage(),
+      );
+    }), (route) => route == null);
+  }
+
   // 登录按钮逻辑
   signIn(UserState state) async {
     if (_welcomeTextAnimaion.status == AnimationStatus.completed) {
@@ -93,43 +103,33 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         return;
       }
 
-      //测试
-      Navigator.pushAndRemoveUntil(context,
-          new PageRouteBuilder(pageBuilder: (_, anim1, anim2) {
-        return FadeTransition(
-          opacity: anim1,
-          child: HomePage(),
-        );
-      }), (route) => route == null);
+      Response res = await _dio.post(Api.login, queryParameters: {
+        "account": _userInputController.text,
+        "password": _pwdInputController.text
+      });
 
-      // Response<String> response = await _dio.post(Api.login, queryParameters: {
-      //   'username': _userInputController.text,
-      //   'password': _pwdInputController.text
-      // });
-      // Map<String, dynamic> data = cv.jsonDecode(response.data);
-
-      // if (data['result']) {
-      //   print(data['data']);
-      //   Map user = data['data'];
-      //   state.update(
-      //       username: user['id'].toString(),
-      //       name: user['name'],
-      //       grade: user['grade'],
-      //       phone: user['phone'],
-      //       email: user['email'],
-      //       sex: int.parse(user['sex']),
-      //       birthday: user['birthday'],
-      //       address: user['address'],
-      //       hometown: user['hometown'],
-      //       school: user['school'],
-      //       company: user['company'],
-      //       picture: user['picture']);
-      //   Navigator.push(context, CupertinoPageRoute(builder: (_) {
-      //     return HomePage();
-      //   }));
-      // } else {
-      //   Fluttertoast.showToast(msg: data['msg']);
-      // }
+      if (res.data['code'] == 0) {
+        // 登录成功
+        navToHome();
+        var data = res.data['data'];
+        state.update(
+            username: data['id']?.toString(),
+            name: data['name']?.toString(),
+            password: data['password']?.toString(),
+            grade: data['grade'],
+            phone: data['phone']?.toString(),
+            email: data['email']?.toString(),
+            sex: data['sex'],
+            birthday: data['birthday']?.toString(),
+            address: data['location']?.toString(),
+            hometown: data['hometown']?.toString(),
+            company: data['company']?.toString(),
+            picture: data['picture']?.toString(),
+            token: data['token']?.toString());
+      } else {
+        Fluttertoast.cancel();
+        Fluttertoast.showToast(msg: res.data['msg']);
+      }
     } else if (_welcomeTextAnimaion.status != AnimationStatus.forward) {
       // 动画正在执行时不能触发
       _animationController.forward();
@@ -180,7 +180,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
     _fadeInAnimationController.forward();
 
-    _userInputController = TextEditingController(text: '1000000');
+    _userInputController = TextEditingController(text: '72');
     _pwdInputController = TextEditingController(text: '12345678');
 
     _dio = Dio();

@@ -9,6 +9,7 @@ import 'package:flutter_tim/pages/register_page.dart';
 import 'package:flutter_tim/state/user_state.dart';
 import 'package:flutter_tim/utils/keyboard_detector.dart';
 import 'package:flutter_tim/widgets/enter_exit_route.dart';
+import 'package:flutter_tim/widgets/tim_toast.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:convert' as cv;
 
@@ -103,13 +104,22 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         return;
       }
 
+      showDialog(
+          context: context, barrierDismissible: false, child: TimToast());
       Response res = await _dio.post(Api.login, queryParameters: {
         "account": _userInputController.text,
         "password": _pwdInputController.text
+      }).catchError((err) {
+        print('登录失败');
+        Navigator.pop(context);
+        Fluttertoast.showToast(msg: '网络异常');
       });
+
+      Navigator.pop(context);
 
       if (res.data['code'] == 0) {
         // 登录成功
+        
         navToHome();
         var data = res.data['data'];
         state.update(

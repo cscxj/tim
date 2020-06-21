@@ -7,9 +7,10 @@ import 'package:flutter_tim/state/conversation_state.dart';
 import 'package:flutter_tim/state/message_state.dart';
 import 'package:flutter_tim/utils/scroll_behaviors.dart';
 import 'package:flutter_tim/widgets/enter_exit_route.dart';
+import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 
 class MessageItem extends StatefulWidget {
-  final ConversationEntity data;
+  final Conversation data;
   final Function onTap;
 
   const MessageItem({Key key, this.data, this.onTap}) : super(key: key);
@@ -70,8 +71,8 @@ class _MessageItemState extends State<MessageItem> {
         duration: Duration(milliseconds: 100), curve: Curves.easeInOut);
   }
 
-  String _genTime(DateTime sendTime) {
-    sendTime = sendTime.add(Duration(hours: 8));
+  String _genTime(int timeStamp) {
+    DateTime sendTime = DateTime.fromMillisecondsSinceEpoch(timeStamp);
     String _numToWord(int n) {
       switch (n) {
         case 1:
@@ -174,17 +175,18 @@ class _MessageItemState extends State<MessageItem> {
                                         padding: EdgeInsets.symmetric(
                                             horizontal: 10),
                                         child: Text(
-                                          widget.data.objectName,
+                                          widget.data.targetId,
                                           style: TextStyle(
                                               fontSize: 16.0,
                                               fontWeight: FontWeight.normal),
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
-                                      widget.data.messages.isNotEmpty
+                                      widget.data.latestMessageContent
+                                              .encode()
+                                              .isNotEmpty
                                           ? Text(
-                                              _genTime(widget
-                                                  .data.messages.first.time),
+                                              _genTime(widget.data.sentTime),
                                               style: TextStyle(
                                                   color: Color(0xff666666),
                                                   fontSize: 14.0,
@@ -198,13 +200,15 @@ class _MessageItemState extends State<MessageItem> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
-                                      widget.data.messages.isNotEmpty
+                                      widget.data.latestMessageContent
+                                              .encode()
+                                              .isNotEmpty
                                           ? Padding(
                                               padding: EdgeInsets.symmetric(
                                                   horizontal: 10),
                                               child: Text(
-                                                widget.data.messages.first
-                                                    .content,
+                                                widget.data.latestMessageContent
+                                                    .conversationDigest(),
                                                 style: TextStyle(
                                                     color: Color(0xff666666),
                                                     fontSize: 14.0,

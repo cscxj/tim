@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_tim/entities/chat_message.dart';
 import 'package:flutter_tim/state/message_state.dart';
+import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 
 class ChatMessageView extends StatefulWidget {
   ChatMessageView(
@@ -14,7 +15,7 @@ class ChatMessageView extends StatefulWidget {
         super(key: key);
 
   final bool isShowName;
-  final MessageEntity message;
+  final Message message;
   final String name;
   final String picture;
 
@@ -34,17 +35,19 @@ class _ChatMessageViewState extends State<ChatMessageView> {
 
   @override
   Widget build(BuildContext context) {
+    bool isMeSent = widget.message.messageDirection == RCMessageDirection.Send;
+
     return Container(
       margin: EdgeInsets.symmetric(vertical: 20.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: widget.message.isMeSend
+        mainAxisAlignment: isMeSent // 是发送出去的来时接收的
             ? MainAxisAlignment.end
             : MainAxisAlignment.start,
         children: <Widget>[
-          widget.message.isMeSend ? Container() : getPicture(),
+          isMeSent ? Container() : getPicture(),
           Column(
-            crossAxisAlignment: widget.message.isMeSend
+            crossAxisAlignment: isMeSent
                 ? CrossAxisAlignment.end
                 : CrossAxisAlignment.start,
             children: <Widget>[
@@ -65,17 +68,17 @@ class _ChatMessageViewState extends State<ChatMessageView> {
                   padding: EdgeInsets.all(12.0),
                   decoration: BoxDecoration(
                       color:
-                          widget.message.isMeSend ? Colors.blue[200] : Colors.white,
+                          isMeSent ? Colors.blue[200] : Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(5.0))),
                   child: Text(
-                    widget.message.content,
+                    widget.message.content.conversationDigest(),
                     style: TextStyle(fontSize: 16.0),
                   ), //暂时只支持文本，支持其他在这里改
                 ),
               )
             ],
           ),
-          widget.message.isMeSend ? getPicture() : Container()
+          isMeSent ? getPicture() : Container()
         ],
       ),
     );

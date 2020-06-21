@@ -21,9 +21,10 @@ import 'dart:convert' as cv;
 import 'package:rongcloud_im_plugin/rongcloud_im_plugin.dart';
 
 class ChatPage extends StatefulWidget {
-  final ConversationEntity conv;
+  final Conversation conv;
 
-  const ChatPage({Key key, this.conv}) : super(key: key);
+  const ChatPage({Key key, @required this.conv}) : super(key: key);
+
   @override
   _ChatPageState createState() => _ChatPageState();
 }
@@ -31,7 +32,7 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   ScrollController _scrollController;
   TextEditingController _inputController;
-  List<MessageEntity> _historyMessages = [];
+  List<Message> _historyMessages = [];
 
   @override
   void initState() {
@@ -39,7 +40,15 @@ class _ChatPageState extends State<ChatPage> {
     _scrollController = ScrollController();
     _inputController = TextEditingController();
 
-    //_messageList = widget.conv.messages;
+    RongIMClient.getHistoryMessage(
+            RCConversationType.Private, widget.conv.targetId, 0, 10)
+        .then((value) {
+      print("${value.length}条历史消息");
+      for (Message msg in value) {
+        _historyMessages.insert(0, msg);
+      }
+      setState(() {});
+    });
   }
 
   @override
@@ -51,21 +60,23 @@ class _ChatPageState extends State<ChatPage> {
 
   double oldLayoutLength = .0; // 加载到新数据的新增布局长度
 
-  Future<void> sendMessage(String msg, ConversationEntity conv) async {
+  Future<void> sendMessage(String msg, Conversation conv) async {
     // 发送消息
     TextMessage txtMessage = TextMessage.obtain(msg);
-    Message m = await RongIMClient.sendMessage(
-        RCConversationType.Private, '73', txtMessage);
-    print("麻利麻利哄 " + m.senderUserId);
+    RongIMClient.sendMessage(
+        RCConversationType.Private, conv.targetId, txtMessage);
     // 保存到本地
-    MessageEntity message =
-        MessageEntity(time: DateTime.now(), content: msg, isMeSend: true);
-    Provider.of<ConversationState>(context, listen: false)
-        .pushMessage(message, conv.objectId);
-
+    // 发送就自动保存了
+    // RongIMClient.insertOutgoingMessage(
+    //     RCConversationType.Private,
+    //     conv.targetId,
+    //     RCSentStatus.Sent,
+    //     TextMessage.obtain(msg),
+    //     0, (msg, code) {
+    //   print("插入消息 " + msg.content.encode() + " 状态码 " + code.toString());
+    // });
+    // 更新ui
     setState(() {});
-    _scrollController.animateTo(.0,
-        duration: Duration(milliseconds: 200), curve: Curves.linear);
   }
 
   // 构建上拉加载指示器
@@ -103,40 +114,13 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  Future<void> _loadingData(int length) async {
-    Response<String> res = await Dio().post(Api.getMessages, queryParameters: {
-      'username': Provider.of<UserState>(this.context, listen: false).username,
-      'friend': widget.conv.objectId,
-      'startIndex': _historyMessages.length + length
-    });
-    List ms = cv.jsonDecode(res.data)[0];
-    ms.forEach((m) {
-      _historyMessages.insert(
-          0,
-          MessageEntity(
-              time: DateTime.parse(m['time']),
-              content: m['content'],
-              isMeSend: m['is_me_send'] == 1));
-    });
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    ConversationEntity currentConversaion;
-    Provider.of<ConversationState>(context).data.forEach((e) {
-      if (widget.conv.objectId == e.objectId) {
-        currentConversaion = e;
-      }
-    });
-
     return ScrollReturnPage(
       child: Scaffold(
           resizeToAvoidBottomPadding: true,
           appBar: ChatAppBar(
-            title: widget.conv.objectName,
+            title: "widget.conv.objectName",
           ),
           resizeToAvoidBottomInset: true,
           body: Column(
@@ -208,19 +192,10 @@ class _ChatPageState extends State<ChatPage> {
                             constraints: BoxConstraints(
                                 minHeight: constraints.viewportMainAxisExtent),
                             child: Column(
-                              children: [
-                                ..._historyMessages.map((i) {
-                                  return ChatMessageView(
-                                      message: i,
-                                      picture: widget.conv.objectPicture);
-                                }).toList(),
-                                ...currentConversaion.messages.reversed
-                                    .map((i) {
-                                  return ChatMessageView(
-                                      message: i,
-                                      picture: widget.conv.objectPicture);
-                                }).toList()
-                              ],
+                              children: _historyMessages.map((e) {
+                                return ChatMessageView(
+                                    message: e, picture: 'assets/touXiang.jpg');
+                              }).toList(),
                             ),
                           ),
                         );
@@ -248,8 +223,8 @@ class _ChatPageState extends State<ChatPage> {
                             )),
                             GestureDetector(
                               onTap: () {
-                                sendMessage(_inputController.value.text,
-                                    currentConversaion);
+                                sendMessage(
+                                    _inputController.value.text, widget.conv);
                                 _inputController.clear();
                               },
                               child: Container(

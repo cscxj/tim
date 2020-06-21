@@ -22,32 +22,15 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      // Client.connect(Provider.of<UserState>(context, listen: false).username);
-      // print('连接到Socket服务器');
-
-      // Client.channel.stream.listen((event) {
-      //   // 模拟接收消息，现在可以收到消息了，还要还发送消息的数据，改成json数据
-      //   print(event);
-      //   Map<String, dynamic> ms = cv.jsonDecode(event);
-
-      //   Provider.of<ConversationState>(context, listen: false).pushMessage(
-      //       MessageEntity(
-      //         time: ms['time'] is int
-      //             ? DateTime.fromMillisecondsSinceEpoch(ms['time'])
-      //             : DateTime.parse(ms['time']),
-      //         content: ms['content'],
-      //       ),
-      //       ms['master']);
-      // });
 
       RongIMClient.init('vnroth0kvls5o');
 
       RongIMClient.connect(Provider.of<UserState>(context, listen: false).token,
-          (code, userId) => {print(userId)});
+          (code, userId) => {print("用户$userId登录成功")});
 
       RongIMClient.onMessageReceivedWrapper =
           (Message msg, int left, bool hasPackage, bool offline) {
-        print("离线消息:" + msg.messageId.toString() + " left:" + left.toString());
+        print("离线消息:" + msg.content.encode() + " left:" + left.toString());
       };
     });
 
